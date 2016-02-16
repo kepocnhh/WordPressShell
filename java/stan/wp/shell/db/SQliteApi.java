@@ -11,7 +11,7 @@ public class SQliteApi
     public static DatabaseHelper dbHelper;
     public static volatile SQLiteDatabase sdb;
     public static String DB_NAME = "wpshelldb";
-    public static int DB_VERSION = 1602130013;
+    public static int DB_VERSION = 1602161544;
 
     public static void createDb(Context context)
     {
@@ -35,22 +35,22 @@ public class SQliteApi
     /* ************************************************************************ */
     public static long insertPostSimple(ContentValues content)
     {
-        return sdb.insertWithOnConflict(Tables.PostSimple_TABLE_NAME, null, content, SQLiteDatabase.CONFLICT_REPLACE);
+        return sdb.insertWithOnConflict(Tables.PostSimple.TABLE_NAME, null, content, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     // Clear table
     /* ************************************************************************ */
     public static void clearPostSimple()
     {
-        sdb.execSQL("drop table if exists " + Tables.PostSimple_TABLE_NAME);
-        sdb.execSQL(Tables.PostSimple);
+        sdb.execSQL("drop table if exists " + Tables.PostSimple.TABLE_NAME);
+        sdb.execSQL(Tables.PostSimple.CREATE_TABLE);
     }
 
     // GET ALL
     /* ************************************************************************ */
     public static Cursor getPostSimple()
     {
-        Cursor main = sdb.query(Tables.PostSimple_TABLE_NAME, null, null, null, null, null, null);
+        Cursor main = sdb.query(Tables.PostSimple.TABLE_NAME, null, null, null, null, null, null);
         return main;
     }
 
@@ -61,8 +61,8 @@ public class SQliteApi
     {
         Cursor cursor = sdb.rawQuery(
                 "SELECT * "
-                        + "FROM " + Tables.PostSimple_TABLE_NAME + " "
-                        + "ORDER BY " + Tables.PostSimple_date_COLUMN + " DESC" + " "
+                        + "FROM " + Tables.PostSimple.TABLE_NAME + " "
+                        + "ORDER BY " + Tables.PostSimple.date_COLUMN + " DESC" + " "
                         + "LIMIT " + p*20 + "; "
                 , new String[]{});
         return cursor;
@@ -72,7 +72,7 @@ public class SQliteApi
     /* ************************************************************************ */
     public static Cursor getOnePostSimpleFromId(String id)
     {
-        Cursor cursor = sdb.query(Tables.PostSimple_TABLE_NAME, null, BaseColumns._ID + " = ?",
+        Cursor cursor = sdb.query(Tables.PostSimple.TABLE_NAME, null, BaseColumns._ID + " = ?",
                 new String[]{id}, null, null, null);
         return cursor;
     }
@@ -81,13 +81,13 @@ public class SQliteApi
     /* ************************************************************************ */
     public static void clearDB(SQLiteDatabase db)
     {
-        db.execSQL("drop table if exists " + Tables.PostSimple_TABLE_NAME);
+        db.execSQL("drop table if exists " + Tables.PostSimple.TABLE_NAME);
     }
 
     // CREATE DB TABLES
     /* ************************************************************************ */
     public static void createDBTables(SQLiteDatabase db)
     {
-        db.execSQL(Tables.PostSimple);
+        db.execSQL(Tables.PostSimple.CREATE_TABLE);
     }
 }

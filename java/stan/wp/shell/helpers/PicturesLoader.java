@@ -1,6 +1,7 @@
 package stan.wp.shell.helpers;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.okhttp.OkHttpClient;

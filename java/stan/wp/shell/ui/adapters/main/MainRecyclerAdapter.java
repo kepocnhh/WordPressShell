@@ -28,9 +28,21 @@ public class MainRecyclerAdapter
     @Override
     protected void initView(RecyclerView.ViewHolder h, int i)
     {
-        getHolder(h).post_title.setText(getString(Tables.PostSimple_title_COLUMN));
-        getHolder(h).post_excerpt.setText(getString(Tables.PostSimple_excerpt_COLUMN));
-        PicturesLoader.loadImage(getHolder(h).post_image, getString(Tables.PostSimple_featured_image_COLUMN));
+        getHolder(h).post_title.setText(getString(Tables.PostSimple.title_COLUMN));
+        getHolder(h).post_excerpt.setText(getString(Tables.PostSimple.excerpt_COLUMN));
+        String format = getString(Tables.PostSimple.format_COLUMN);
+        if(format == null)
+        {
+
+        }
+        else if(format.equals("standard"))
+        {
+            PicturesLoader.loadImage(getHolder(h).post_image, getString(Tables.PostSimple.featured_image_COLUMN));
+        }
+        else if(format.equals("video"))
+        {
+            getHolder(h).post_image.setImageResource(R.drawable.youtube);
+        }
     }
 
     MainRecyclerHolder getHolder(RecyclerView.ViewHolder holder)
