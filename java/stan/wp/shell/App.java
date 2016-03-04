@@ -3,6 +3,8 @@ package stan.wp.shell;
 import android.app.Application;
 import android.content.Context;
 
+import java.io.File;
+
 import stan.wp.shell.db.SQliteApi;
 import stan.wp.shell.rest.spice.StanSpiceManager;
 
@@ -18,5 +20,6 @@ public class App
         super.onCreate();
         app_context = getApplicationContext();
         SQliteApi.createDb(app_context);
+        new File(app_context.getFilesDir().getAbsolutePath() + "/" + "featuredImages").mkdirs();
     }
 }
