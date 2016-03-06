@@ -1,73 +1,35 @@
 package stan.wp.shell.helpers;
 
-import android.os.AsyncTask;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
+import java.io.File;
 
 public class AsyncPicturesLoader
-        extends AsyncTask<String, Void, String>
+        extends AsyncFilesLoader
 {
-    @Override
-    protected String doInBackground(String... arg0)
+    private ImageView imageView;
+    private int errorImage;
+
+    public AsyncPicturesLoader(ImageView iv, int ei)
     {
-        try
-        {
-            HttpURLConnection huc = (HttpURLConnection) new URL(arg0[0]).openConnection();
-            huc.setConnectTimeout(5 * 1000);
-            huc.connect();
-            InputStream input = huc.getInputStream();
-            OutputStream output = new FileOutputStream(arg0[1]);
-            byte data[] = new byte[1024];
-            int count;
-            while((count = input.read(data)) != -1)
-            {
-                output.write(data, 0, count);
-            }
+        this.imageView = iv;
+        this.errorImage = ei;
+    }
 
-//            InputStream input = null;
-//            OutputStream output = null;
-//            HttpURLConnection connection = null;
-//            URL url = new URL(arg0[0]);
-//            connection = (HttpURLConnection) url.openConnection();
-//            connection.connect();
-//
-//            if(connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-//            {
-//                Log.e("AsyncPicturesLoader","Server returned HTTP " + connection.getResponseCode() + " " + connection.getResponseMessage());
-//            }
-//
-//            input = connection.getInputStream();
-//            output = new FileOutputStream(arg0[1]);
-//
-//            byte data[] = new byte[4096];
-//            int count;
-//            while((count = input.read(data)) != -1)
-//            {
-//                output.write(data, 0, count);
-//            }
-
-            output.flush();
-            output.close();
-            input.close();
-        }
-        catch(ConnectException e)
+    @Override
+    protected void onPostExecute(String path)
+    {
+        File f = new File(path);
+        if(f.exists())
         {
-            Log.e("AsyncPicturesLoader", "open Stream - ConnectException " + e.getMessage());
+            Bitmap myBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
+            this.imageView.setImageBitmap(myBitmap);
         }
-        catch(SocketTimeoutException e)
+        else
         {
-            Log.e("AsyncPicturesLoader", "open Stream - SocketTimeoutException " + e.getMessage());
-        } catch(Exception e)
-        {
-            Log.e("AsyncPicturesLoader", e.getMessage());
+            this.imageView.setImageResource(this.errorImage);
         }
-        return arg0[1];
     }
 }

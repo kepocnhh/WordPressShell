@@ -6,11 +6,13 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 
 import stan.wp.shell.R;
 import stan.wp.shell.db.Tables;
+import stan.wp.shell.helpers.AsyncFilesLoader;
 import stan.wp.shell.helpers.AsyncPicturesLoader;
 import stan.wp.shell.helpers.PicturesLoader;
 import stan.wp.shell.ui.adapters.StanRecyclerAdapter;
@@ -36,40 +38,32 @@ public class MainRecyclerAdapter
     {
         getHolder(h).post_title.setText(getString(Tables.PostSimple.title_COLUMN));
         getHolder(h).post_excerpt.setText(getString(Tables.PostSimple.excerpt_COLUMN));
+//        getHolder(h).post_image.setImageDrawable(null);
         String format = getString(Tables.PostSimple.format_COLUMN);
         if(format == null)
         {
 
         } else if(format.equals("standard"))
         {
-            //PicturesLoader.loadImage(getHolder(h).post_image, getString(Tables.PostSimple.featured_image_COLUMN));
             String imgPath = mContext.getFilesDir().getAbsolutePath() + "/" + "featuredImages" + "/" + getItemId(i) + ".jpg";
-            final ImageView post_image = getHolder(h).post_image;
             File f = new File(imgPath);
             if(f.exists())
             {
                 Bitmap myBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-                post_image.setImageBitmap(myBitmap);
+                if(myBitmap.getWidth() > myBitmap.getHeight())
+                {
+                    getHolder(h).post_container.setOrientation(LinearLayout.VERTICAL);
+                }
+                else
+                {
+                    getHolder(h).post_container.setOrientation(LinearLayout.HORIZONTAL);
+                }
+                getHolder(h).post_image.setImageBitmap(myBitmap);
             }
             else
             {
-                new AsyncPicturesLoader()
-                {
-                    @Override
-                    protected void onPostExecute(String path)
-                    {
-                        File f = new File(path);
-                        if(f.exists())
-                        {
-                            Bitmap myBitmap = BitmapFactory.decodeFile(f.getAbsolutePath());
-                            post_image.setImageBitmap(myBitmap);
-                        }
-                        else
-                        {
-                            post_image.setImageResource(R.drawable.ic_launcher);
-                        }
-                    }
-                }.execute(getString(Tables.PostSimple.featured_image_COLUMN), imgPath);
+                PicturesLoader.loadImage(getHolder(h).post_image, getString(Tables.PostSimple.featured_image_COLUMN));
+                new AsyncFilesLoader().execute(getString(Tables.PostSimple.featured_image_COLUMN), imgPath);
             }
         } else if(format.equals("video"))
         {
